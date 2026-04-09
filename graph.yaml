@@ -1,0 +1,166 @@
+# ============================================================
+# 知识图库数据文件
+# 修改这个文件，然后运行 `python build.py` 生成新的 HTML
+# ============================================================
+
+# --- 分类定义 ---
+# 每个分类需要：id（唯一标识）、name（显示名）、color（颜色）
+groups:
+  - id: core
+    name: 核心
+    color: "#ffd54f"
+  - id: AI
+    name: 技术
+    color: "#4fc3f7"
+  - id: language
+    name: 语言
+    color: "#81c784"
+  - id: note
+    name: 笔记
+    color: "#ff8a65"
+  # - id: read
+  #   name: 阅读
+  #   color: "#ce93d8"
+
+# --- 节点定义 ---
+# 每个节点需要：id（唯一标识/显示名）、group（所属分类id）、size（圆圈大小，建议10-30）、desc（悬停描述）
+nodes:
+  - id: Me
+    group: core
+    size: 28
+    desc: 所有知识的出发点与归宿
+
+  - id: CV
+    group: AI
+    size: 20
+    desc: 2025.9
+  - id: Transfer Learning
+    group: AI
+    size: 15
+    desc: 2025.9
+  # - id: 系统设计
+  #   group: AI
+  #   size: 14
+  #   desc: 如何构建可扩展的软件系统
+  # - id: 算法笔记
+  #   group: AI
+  #   size: 13
+  #   desc: 数据结构与算法的学习整理
+
+  - id: 排版语言
+    group: language
+    size: 20
+    desc: 顾名思义,用来排版&渲染&做笔记的
+  - id: Typst
+    group: language
+    size: 14
+    desc: 2025年始
+  - id: LaTeX
+    group: language
+    size: 14
+    desc: 2023年始
+  # - id: 学习方法
+  #   group: language
+  #   size: 15
+  #   desc: 如何更高效地学习新知识
+  # - id: 决策框架
+  #   group: language
+  #   size: 13
+  #   desc: 在不确定性中做出好决策
+
+  - id: 计算理论导引
+    group: note
+    size: 19
+    desc: 2025.9-2026.1
+  - id: 计算机组成原理
+    group: note
+    size: 14
+    desc: RISC-V btw
+  - id: 笔记
+    group: note
+    size: 20
+    desc: thx @xhkzdepardedream && @beigou9 && @Larry
+  # - id: 播客笔记
+  #   group: note
+  #   size: 11
+  #   desc: 值得记录的播客内容摘要
+
+  # - id: 阅读笔记
+  #   group: read
+  #   size: 19
+  #   desc: 书籍与文章的读后感与摘录
+  # - id: 科技类
+  #   group: read
+  #   size: 13
+  #   desc: 科技、互联网相关书单
+  # - id: 哲学与人文
+  #   group: read
+  #   size: 13
+  #   desc: 探索人生意义的阅读
+  # - id: 传记
+  #   group: read
+  #   size: 12
+  #   desc: 从他人经历中汲取智慧
+
+# --- 连线定义 ---
+# source 和 target 填写节点的 id
+# strong: true 表示强连接（实线粗线），省略或 false 为普通连接（细虚线）
+links:
+  - source: Me
+    target: CV
+    strong: true
+  - source: Me
+    target: 排版语言
+    strong: true
+  - source: Me
+    target: 笔记
+    strong: true
+  - source: CV
+    target: Transfer Learning
+  - source: 笔记
+    target: 计算理论导引
+  - source: 笔记
+    target: 计算机组成原理
+  - source: 计算理论导引
+    target: Typst
+  - source: 计算机组成原理
+    target: Typst
+  - source: 排版语言
+    target: LaTeX
+  - source: 排版语言
+    target: Typst
+  # - source: 前端开发
+  #   target: 设计思维
+
+  # - source: 思维方式
+  #   target: 第一性原理
+  # - source: 思维方式
+  #   target: 系统思维
+  # - source: 思维方式
+  #   target: 学习方法
+  # - source: 思维方式
+  #   target: 决策框架
+  # - source: 系统思维
+  #   target: 系统设计
+
+  # - source: 创作与表达
+  #   target: 写作技艺
+  # - source: 创作与表达
+  #   target: 设计思维
+  # - source: 创作与表达
+  #   target: 播客笔记
+  # - source: 写作技艺
+  #   target: 学习方法
+
+  # - source: 阅读笔记
+  #   target: 科技类
+  # - source: 阅读笔记
+  #   target: 哲学与人文
+  # - source: 阅读笔记
+  #   target: 传记
+  # - source: 哲学与人文
+  #   target: 第一性原理
+  # - source: 科技类
+  #   target: AI 与机器学习
+  # - source: 传记
+  #   target: 决策框架

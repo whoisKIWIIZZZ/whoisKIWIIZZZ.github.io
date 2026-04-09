@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Heatmap</title>
+<style>
+:root,
+html[data-theme="light"] {
+    --hm-subtext:    #57606a;
+    --hm-btn-bg:     rgba(0,0,0,0.06);
+    --hm-btn-hover:  rgba(0,0,0,0.10);
+    --hm-active-bg:  #0969da;
+    --hm-active-fg:  #ffffff;
+    --hm-cell-empty: #ebedf0;
+    --hm-tip-bg:     #ffffff;
+    --hm-tip-border: #d0d7de;
+    --hm-tip-fg:     #24292f;
+    --hm-l1: #9be9a8; --hm-l2: #40c463;
+    --hm-l3: #30a14e; --hm-l4: #216e39;
+}
+html[data-theme="dark"] {
+    --hm-subtext:    #7d8590;
+    --hm-btn-bg:     rgba(255,255,255,0.08);
+    --hm-btn-hover:  rgba(255,255,255,0.14);
+    --hm-active-bg:  #1f6feb;
+    --hm-active-fg:  #ffffff;
+    --hm-cell-empty: #21262d;
+    --hm-tip-bg:     #1c2128;
+    --hm-tip-border: #30363d;
+    --hm-tip-fg:     #c9d1d9;
+    --hm-l1: #0e4429; --hm-l2: #006d32;
+    --hm-l3: #26a641; --hm-l4: #39d353;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    background: transparent;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    padding: 8px 0;
+}
+#hm-wrap { display: inline-block; min-width: 100%; }
+.hm-year-sel {
+    display: flex; gap: 4px; padding: 4px;
+    border-radius: 6px; background: var(--hm-btn-bg);
+    margin-bottom: 14px; width: fit-content;
+}
+.hm-ybtn {
+    background: transparent; border: none; color: var(--hm-subtext);
+    padding: 4px 12px; border-radius: 4px;
+    cursor: pointer; font-size: 12px; font-weight: 500;
+    transition: all 0.15s;
+}
+.hm-ybtn:hover  { background: var(--hm-btn-hover); color: inherit; }
+.hm-ybtn.active { background: var(--hm-active-bg); color: var(--hm-active-fg); }
+.hm-months { position: relative; height: 16px; margin-bottom: 4px; margin-left: 28px; }
+.hm-mlbl   { position: absolute; font-size: 11px; color: var(--hm-subtext); }
+.hm-grid  { display: flex; gap: 4px; }
+.hm-wdays { display: flex; flex-direction: column; gap: 3px; flex-shrink: 0; }
+.hm-wday  {
+    font-size: 10px; color: var(--hm-subtext);
+    height: 12px; line-height: 12px;
+    width: 24px; text-align: right; padding-right: 4px;
+}
+.hm-weeks { display: flex; gap: 3px; }
+.hm-week  { display: flex; flex-direction: column; gap: 3px; }
+.hm-day {
+    width: 12px; height: 12px; border-radius: 2px;
+    cursor: pointer; flex-shrink: 0; transition: transform 0.1s;
+}
+.hm-day:hover { transform: scale(1.3); outline: 1px solid var(--hm-subtext); }
+.hm-day[data-l="0"] { background: var(--hm-cell-empty); }
+.hm-day[data-l="1"] { background: var(--hm-l1); }
+.hm-day[data-l="2"] { background: var(--hm-l2); }
+.hm-day[data-l="3"] { background: var(--hm-l3); }
+.hm-day[data-l="4"] { background: var(--hm-l4); }
+#hm-tip {
+    position: fixed;
+    background: var(--hm-tip-bg); border: 1px solid var(--hm-tip-border);
+    color: var(--hm-tip-fg); border-radius: 6px; padding: 6px 10px;
+    font-size: 12px; pointer-events: none; z-index: 9999; display: none;
+    box-shadow: 0 4px 16px rgba(0,0,0,.15); white-space: nowrap;
+}
+#hm-tip.show { display: block; }
+</style>
+</head>
+<body>
+<div id="hm-wrap">
+    <div class="hm-year-sel" id="hm-ybtnbox"></div>
+    <div style="overflow-x:auto"><div id="hm-root"></div></div>
+</div>
+<div id="hm-tip"></div>
+<script>
+// ── 主题同步 ──────────────────────────────────────────────────────────────────
+window.addEventListener("message", (e) => {
+    if (e.data?.type === "set-theme")
+        document.documentElement.setAttribute("data-theme", e.data.theme);
+});
+window.addEventListener("load", () => {
+    window.parent.postMessage({ type: "request-theme" }, "*");
+});
+setTimeout(() => {
+    window.parent.postMessage({ type: "request-theme" }, "*");
+}, 100);
+
+// ── 热力图逻辑 ────────────────────────────────────────────────────────────────
+(function () {
+    const DATA  = {};
+    const YEARS = [2026];
+    const TODAY = "2026-03-15";
+    const SINCE = "2025-03-16";
+    const MN    = ["Jan","Feb","Mar","Apr","May","Jun",
+                   "Jul","Aug","Sep","Oct","Nov","Dec"];
+    let mode = "recent";
+
+    const pad = n => String(n).padStart(2, "0");
+    const fmt = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+
+    function getRange(m) {
+        if (m === "recent") {
+            const s = new Date(SINCE);
+            while (s.getDay() !== 0) s.setDate(s.getDate() - 1);
+            const e = new Date(TODAY);
+            while (e.getDay() !== 6) e.setDate(e.getDate() + 1);
+            return [s, e];
+        }
+        const yr = parseInt(m);
+        const s = new Date(yr, 0, 1); while (s.getDay() !== 0) s.setDate(s.getDate()-1);
+        const e = new Date(yr,11,31); while (e.getDay() !== 6) e.setDate(e.getDate()+1);
+        return [s, e];
+    }
+
+    function lvl(c, mx) {
+        if (!c) return 0;
+        const r = c / mx;
+        return r <= .25 ? 1 : r <= .5 ? 2 : r <= .75 ? 3 : 4;
+    }
+
+    function buildButtons() {
+        const box = document.getElementById("hm-ybtnbox");
+        box.innerHTML = "";
+        [["最近一年","recent"], ...YEARS.map(y => [String(y), String(y)])].forEach(([label, m]) => {
+            const btn = document.createElement("button");
+            btn.className = "hm-ybtn" + (mode === m ? " active" : "");
+            btn.textContent = label;
+            btn.onclick = () => { mode = m; buildButtons(); render(); };
+            box.appendChild(btn);
+        });
+    }
+
+    function render() {
+        const [start, end] = getRange(mode);
+        const weeks = [];
+        const cur = new Date(start);
+        while (cur <= end) {
+            const w = [];
+            for (let i = 0; i < 7; i++) { w.push(new Date(cur)); cur.setDate(cur.getDate()+1); }
+            weeks.push(w);
+        }
+        const s = fmt(start), e = fmt(end), map = {};
+        for (const [d, c] of Object.entries(DATA)) if (d >= s && d <= e) map[d] = c;
+        const mx = Math.max(...Object.values(map), 1);
+
+        const root = document.getElementById("hm-root");
+        root.innerHTML = "";
+
+        const CELL = 15;
+        const mRow = document.createElement("div"); mRow.className = "hm-months";
+        let lastM = -1;
+        weeks.forEach((w, wi) => {
+            const m = w[0].getMonth();
+            if (m !== lastM) {
+                lastM = m;
+                const lbl = document.createElement("div");
+                lbl.className = "hm-mlbl";
+                lbl.textContent = MN[m];
+                lbl.style.left = (wi * CELL) + "px";
+                mRow.appendChild(lbl);
+            }
+        });
+        root.appendChild(mRow);
+
+        const grid = document.createElement("div"); grid.className = "hm-grid";
+        const wd = document.createElement("div"); wd.className = "hm-wdays";
+        ["日","一","二","三","四","五","六"].forEach(t => {
+            const el = document.createElement("div"); el.className = "hm-wday"; el.textContent = t; wd.appendChild(el);
+        });
+        grid.appendChild(wd);
+
+        const ws = document.createElement("div"); ws.className = "hm-weeks";
+        weeks.forEach(week => {
+            const col = document.createElement("div"); col.className = "hm-week";
+            week.forEach(dt => {
+                const ds = fmt(dt), cnt = map[ds] || 0;
+                const cell = document.createElement("div");
+                cell.className = "hm-day";
+                cell.dataset.l = lvl(cnt, mx);
+                cell.dataset.date = ds;
+                cell.dataset.count = cnt;
+                cell.addEventListener("mouseenter", onEnter);
+                cell.addEventListener("mouseleave", onLeave);
+                col.appendChild(cell);
+            });
+            ws.appendChild(col);
+        });
+        grid.appendChild(ws);
+        root.appendChild(grid);
+    }
+
+    const tip = document.getElementById("hm-tip");
+    function onEnter(e) {
+        tip.textContent = `${e.target.dataset.date}：${e.target.dataset.count} 次贡献`;
+        tip.classList.add("show");
+    }
+    function onLeave() { tip.classList.remove("show"); }
+    document.addEventListener("mousemove", e => {
+        if (tip.classList.contains("show")) {
+            tip.style.left = (e.clientX + 12) + "px";
+            tip.style.top  = (e.clientY - 34) + "px";
+        }
+    });
+
+    buildButtons();
+    render();
+})();
+</script>
+</body>
+</html>
