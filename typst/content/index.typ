@@ -23,7 +23,6 @@ I am dedicated to developing CLIP-based multimodal Source-Free Domain Adaptation
 == 🔍 Research Interests
 #hr()
 - *CLIP-based Multimodal SFDA*
-- *Medical Image Segmentation*
 - *Computability Theory*
 
 == 💻 Projects
@@ -86,16 +85,6 @@ A high-performance, real-time audio visualization tool built with *egui* and *cp
 == 📄 CV & More
 #hr()
 - #link("https://yisz.top/CV")[CV]
-== Commit
-#hr()
-
-#v(2em)
-#line(length: 100%, stroke: 0.5pt + gray)
-// #set text(size: 0.8em, fill: gray)
-== Knowledge Graph
-#hr()
-thx Claude Sonnet 4.6.
-#line(length: 100%, stroke: 0.5pt + gray)
 == 📬 Contact
 #hr()
 - *Email:* #link("mailto:yishouzhuo@whu.edu.cn")[yishouzhuo\@whu.edu.cn]

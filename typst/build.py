@@ -34,6 +34,7 @@ Tufted Blog Template 构建脚本
 """
 
 import argparse
+import json
 import os
 import re
 import shutil
@@ -53,6 +54,11 @@ CONTENT_DIR = Path("content")  # 源文件目录
 SITE_DIR = Path("../")  # 输出目录
 ASSETS_DIR = Path("assets")  # 静态资源目录
 CONFIG_FILE = Path("config.typ")  # 全局配置文件
+
+# 翻页导航配置：content/ 下哪些目录需要自动生成“上一篇/下一篇”导航
+# 脚本会自动扫描这些目录下的所有 index.typ，按路径字母序排列，
+# 并从编译后的 HTML 中提取标题作为链接文字。
+NAV_COLLECTIONS = ["Projects","Memoir"]
 
 # ============================================================================
 # 增量编译辅助函数
@@ -426,6 +432,188 @@ def build_html(force: bool = False):
     return fail_count == 0
 
 
+def generate_page_nav_html(prev_page, next_page) -> str:
+    """
+    生成翻页导航的 HTML 片段。
+
+    参数:
+        prev_page: 上一页信息 {"url": str, "title": str} 或 None
+        next_page: 下一页信息 {"url": str, "title": str} 或 None
+
+    返回:
+        str: 导航 HTML 字符串
+    """
+    parts = ['<nav class="page-nav">']
+    if prev_page:
+        parts.append(
+            f'<a class="page-nav-prev" href="{prev_page["url"]}">'
+            f"&larr; {prev_page['title']}</a>"
+        )
+    else:
+        parts.append('<span class="page-nav-prev page-nav-empty"></span>')
+    if next_page:
+        parts.append(
+            f'<a class="page-nav-next" href="{next_page["url"]}">'
+            f"{next_page['title']} &rarr;</a>"
+        )
+    else:
+        parts.append('<span class="page-nav-next page-nav-empty"></span>')
+    parts.append("</nav>")
+    return "\n".join(parts)
+
+
+def strip_html_tags(text: str) -> str:
+    """
+    去除 HTML 标签，返回纯文本。
+    """
+    return re.sub(r"<[^>]*>", "", text)
+
+
+def extract_title_from_html(html_file: Path) -> str:
+    """
+    从编译好的 HTML 文件中提取文章标题。
+
+    优先使用第一个 <h1> 或 <h2>，找不到则回退到 <title>，
+    再找不到则使用父目录名。
+
+    参数:
+        html_file: HTML 文件路径
+
+    返回:
+        str: 提取到的标题
+    """
+    try:
+        content = html_file.read_text(encoding="utf-8")
+    except Exception:
+        return html_file.parent.name
+
+    # 尝试第一个 <h1>
+    m = re.search(r"<h1[^>]*>(.*?)</h1>", content, re.DOTALL)
+    if m:
+        return strip_html_tags(m.group(1)).strip()
+
+    # 尝试第一个 <h2>
+    m = re.search(r"<h2[^>]*>(.*?)</h2>", content, re.DOTALL)
+    if m:
+        return strip_html_tags(m.group(1)).strip()
+
+    # 回退到 <title>
+    m = re.search(r"<title>(.*?)</title>", content)
+    if m:
+        return m.group(1).strip()
+
+    return html_file.parent.name
+
+
+def inject_page_navigation() -> bool:
+    """
+    自动扫描 NAV_COLLECTIONS 中定义的目录，为其中的 HTML 页面注入翻页导航。
+
+    对每个 collection（如 Memoir）：
+    1. 找到 content/<collection>/ 下所有 index.typ
+    2. 按路径字母序排列（根 index.typ 始终在最前）
+    3. 从编译好的 HTML 中提取标题作为链接文字
+    4. 在 <section> 之后插入“上一篇/下一篇”导航 HTML
+
+    返回:
+        bool: 是否成功完成注入
+    """
+    if not NAV_COLLECTIONS:
+        return True
+
+    print("正在注入翻页导航...")
+    total_injected = 0
+
+    for collection_name in NAV_COLLECTIONS:
+        collection_dir = CONTENT_DIR / collection_name
+        if not collection_dir.is_dir():
+            print(f"  ⚠ 目录 {collection_dir} 不存在，跳过。")
+            continue
+
+        # 收集该目录下所有 index.typ
+        typ_files = sorted(
+            (p for p in collection_dir.rglob("index.typ")
+             if not any(part.startswith("_") for part in p.relative_to(CONTENT_DIR).parts)),
+            key=lambda p: _nav_sort_key(p, collection_name),
+        )
+
+        if len(typ_files) < 2:
+            # 只有一个文件，不需要翻页导航
+            continue
+
+        # 构建页面信息列表
+        pages = []
+        for typ_file in typ_files:
+            html_file = get_html_output_path(typ_file)
+            if not html_file.exists():
+                continue
+
+            title = extract_title_from_html(html_file)
+
+            # 计算 URL 路径
+            rel = typ_file.relative_to(CONTENT_DIR)
+            url = "/" + str(rel.parent) + "/" if rel.name == "index.typ" else "/" + str(rel.with_suffix("")) + "/"
+            # 处理根目录：content/Memoir/index.typ → /Memoir/
+            if rel.parent == Path(collection_name):
+                url = "/" + collection_name + "/"
+            else:
+                url = "/" + str(rel.parent).replace("\\", "/") + "/"
+
+            pages.append({"url": url, "title": title})
+
+        if len(pages) < 2:
+            continue
+
+        # 逐个注入翻页导航
+        for i, page in enumerate(pages):
+            html_file = SITE_DIR / page["url"].strip("/") / "index.html"
+            if not html_file.exists():
+                print(f"  ⚠ 找不到页面文件: {html_file}")
+                continue
+
+            prev_page = pages[i - 1] if i > 0 else None
+            next_page = pages[i + 1] if i < len(pages) - 1 else None
+
+            nav_html = generate_page_nav_html(prev_page, next_page)
+
+            try:
+                content = html_file.read_text(encoding="utf-8")
+            except Exception as e:
+                print(f"  ⚠ 读取 {html_file} 失败: {e}")
+                continue
+
+            # 先清除已有的翻页导航（保证增量构建时顺序变化也能正确更新）
+            content = re.sub(r'<nav class="page-nav">.*?</nav>\s*', '', content, flags=re.DOTALL)
+
+            # 在第一个 <section> 之后插入导航
+            content = re.sub(r"(<section>)", r"\1\n" + nav_html, content, count=1)
+            html_file.write_text(content, encoding="utf-8")
+            total_injected += 1
+
+    if total_injected > 0:
+        print(f"  ✅ 翻页导航注入完成，共处理 {total_injected} 个页面。")
+    return True
+
+
+def _nav_sort_key(typ_file: Path, collection_name: str) -> str:
+    """
+    排序键：collection 根目录的 index.typ 始终排在最前，
+    其余按相对路径字母序排列。
+
+    参数:
+        typ_file: .typ 文件路径
+        collection_name: collection 目录名
+
+    返回:
+        str: 排序键
+    """
+    collection_dir = CONTENT_DIR / collection_name
+    if typ_file.parent.resolve() == collection_dir.resolve():
+        return "!"  # ASCII '!' 在所有字母数字之前
+    rel = typ_file.relative_to(CONTENT_DIR)
+    return str(rel.parent)
+
+
 def build_pdf(force: bool = False):
     """
     编译文件名包含 "PDF" 的 .typ 文件为 PDF。
@@ -652,6 +840,7 @@ def build(force: bool = False):
 
     print()
     results.append(build_html(force))
+    results.append(inject_page_navigation())
     results.append(build_pdf(force))
     print()
 
@@ -739,7 +928,7 @@ if __name__ == "__main__":
     # 执行对应的命令
     commands = {
         "build": lambda: build(force),
-        "html": lambda: (SITE_DIR.mkdir(parents=True, exist_ok=True), build_html(force))[1],
+        "html": lambda: (SITE_DIR.mkdir(parents=True, exist_ok=True), build_html(force), inject_page_navigation(), copy_assets())[3],
         "pdf": lambda: (SITE_DIR.mkdir(parents=True, exist_ok=True), build_pdf(force))[1],
         "assets": lambda: (SITE_DIR.mkdir(parents=True, exist_ok=True), copy_assets())[1],
         "clean": clean,
