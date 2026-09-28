@@ -11,8 +11,8 @@
     "/": "Home",
     "/CV/": "CV",
     "/Projects/": "Projects",
-    "/Memoir/": "Memoir",
-    "/o1/": "o1",
+    // "/Memoir/": "Memoir",
+    // "/o1/": "o1",
 
   ),
   lang: "zh",

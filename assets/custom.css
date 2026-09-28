@@ -3,6 +3,170 @@ CUSTOM STYLES
 
 Add your custom CSS styles here to override or extend the default styles.
 *******************************************************************************/
+
+/* 主页教育与经历 */
+.profile-section {
+    --profile-primary: #2f6fb3;
+    --profile-muted: #6b7280;
+    box-sizing: border-box;
+    width: 55%;
+    max-width: 55%;
+    margin: 2rem 0 0;
+    font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.65;
+}
+html[data-theme="dark"] .profile-section,
+html:not([data-theme]) .profile-section {
+    --profile-primary: #7fb0e8;
+    --profile-muted: #9aa3af;
+}
+
+@media (prefers-color-scheme: dark) {
+    html:not([data-theme]) .profile-section {
+        --profile-primary: #7fb0e8;
+        --profile-muted: #9aa3af;
+    }
+}
+
+.profile-section > h3 {
+    width: 100%;
+    margin: 0 0 15.2px;
+    padding-bottom: 7.2px;
+    border-bottom: 1px solid var(--theme-table-border);
+    font-family: inherit;
+    font-size: 21.6px;
+    font-weight: 700;
+    line-height: 1.65;
+    color: var(--profile-primary) !important;
+}
+
+.profile-entry {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    box-sizing: border-box;
+    min-width: 0;
+    padding: 14.4px 0;
+    border-bottom: 1px solid var(--theme-table-border);
+}
+
+.profile-entry:last-child {
+    border-bottom: 0;
+}
+
+.profile-section--education .profile-entry {
+    align-items: flex-start;
+    padding: 4.8px 0;
+    border-bottom: 0;
+}
+
+.profile-entry-logo {
+    display: flex;
+    flex: 0 0 56px;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    margin-top: 0.15rem;
+}
+
+.profile-entry-logo img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    margin: 0;
+    object-fit: contain;
+}
+
+.profile-section--experience .profile-entry-logo {
+    box-sizing: border-box;
+    flex-basis: 72px;
+    width: 72px;
+    height: 72px;
+    margin-top: 0;
+    border: 1px solid #d9e7f6;
+    border-radius: 14px;
+    background: #f8fbff;
+    overflow: hidden;
+}
+
+.profile-section--experience .profile-entry-logo img {
+    width: 82%;
+    height: 82%;
+}
+
+html[data-theme="dark"] .profile-section--experience .profile-entry-logo,
+html:not([data-theme]) .profile-section--experience .profile-entry-logo {
+    border-color: #2a3f5c;
+    background: #1b2430;
+}
+
+@media (prefers-color-scheme: dark) {
+    html:not([data-theme]) .profile-section--experience .profile-entry-logo {
+        border-color: #2a3f5c;
+        background: #1b2430;
+    }
+}
+
+.profile-entry-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.profile-entry-main {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 11.2px;
+}
+
+.profile-entry-title {
+    min-width: 0;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.65;
+}
+
+.profile-entry-date {
+    font-size: 15.2px;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.65;
+    white-space: nowrap;
+    color: var(--profile-muted);
+}
+
+.profile-entry-detail {
+    margin-top: 2.88px;
+    font-size: 15.2px;
+    line-height: 1.65;
+    color: var(--profile-muted);
+}
+
+@media (max-width: 860px) {
+    .profile-section--experience .profile-entry-logo {
+        flex-basis: 60px;
+        width: 60px;
+        height: 60px;
+    }
+}
+
+@media (max-width: 760px) {
+    .profile-section {
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .profile-entry-main {
+        flex-wrap: wrap;
+        gap: 5.6px;
+    }
+}
 /* Contribution Graph Styles */
 .contribution-graph {
     padding: 20px;
