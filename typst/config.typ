@@ -34,6 +34,7 @@
   "/CV/": "CV",
   "/Projects/": "Projects",
   "/Memoir/": "Memoir",
+  "/Awards/": "Awards",
 )
 
 #let footer-follow = (

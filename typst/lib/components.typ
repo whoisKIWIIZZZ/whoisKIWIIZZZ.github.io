@@ -239,6 +239,79 @@
   }
 })
 
+// ─────────────────────────────────────────────────────────────────────────────
+// 列表页
+//
+// Awards / Honors 这类页面用。一条一行，年份靠右；
+// 传 `link` 会出链接，传 `badge` 会在名字后面挂一个小标签。
+//
+//   #ui.awards[
+//     #ui.award("名称", issuer: "单位", year: "2026")
+//     #ui.award("名称", body: [说明。], year: "2026", badge: [特等奖])
+//   ]
+//
+// 传内容块而不是数组，是因为 Typst 的具名参数在数组字面量里不认，
+// 写成数组的话只能按位置排，可读性差很多。
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// 奖项 / 荣誉条目
+#let award(
+  name,
+  body: none,
+  issuer: none,
+  year: none,
+  link: none,
+  badge: none,
+) = html.elem("li", attrs: (class: "award"), {
+  html.elem("div", attrs: (class: "award-main"), {
+    html.elem("span", attrs: (class: "award-name"), name)
+    if badge != none {
+      html.elem("span", attrs: (class: "award-badge"), badge)
+    }
+    if issuer != none {
+      html.elem("span", attrs: (class: "award-issuer"), issuer)
+    }
+  })
+  if year != none {
+    html.elem("span", attrs: (class: "award-year"), year)
+  }
+  if body != none {
+    html.elem("p", attrs: (class: "award-detail"), body)
+  }
+  if link != none {
+    html.elem("p", attrs: (class: "entry-links"), links((link,)))
+  }
+})
+
+/// 奖项 / 荣誉列表
+#let awards(body) = html.elem("ul", attrs: (class: "awards"), body)
+
+/// 时间线上的一条：获奖、经历、论文都能套这个壳
+#let timeline-entry(when, what, body: none, link: none) = html.elem(
+  "li",
+  attrs: (class: "tl-item"),
+  {
+    html.elem("span", attrs: (class: "tl-when"), when)
+    html.elem("div", attrs: (class: "tl-body"), {
+      html.elem("h3", attrs: (class: "tl-what"), what)
+      if body != none {
+        html.elem("p", attrs: (class: "tl-detail"), body)
+      }
+      if link != none {
+        html.elem("p", attrs: (class: "entry-links"), links((link,)))
+      }
+    })
+  },
+)
+
+/// 时间线
+#let timeline(body) = html.elem("ul", attrs: (class: "timeline"), body)
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 专辑
+// ─────────────────────────────────────────────────────────────────────────────
+
 /// 专辑：曲目表 + 封面
 #let release(items, covers) = html.elem("div", attrs: (class: "release"), {
   html.elem("ol", attrs: (class: "tracks"), {

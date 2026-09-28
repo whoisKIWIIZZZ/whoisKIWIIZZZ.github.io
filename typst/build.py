@@ -58,7 +58,7 @@ CONFIG_FILE = Path("config.typ")  # 全局配置文件
 # 翻页导航配置：content/ 下哪些目录需要自动生成“上一篇/下一篇”导航
 # 脚本会自动扫描这些目录下的所有 index.typ，按路径字母序排列，
 # 并从编译后的 HTML 中提取标题作为链接文字。
-NAV_COLLECTIONS = ["Projects","Memoir"]
+NAV_COLLECTIONS = ["Projects", "Memoir", "Awards"]
 
 # ============================================================================
 # 增量编译辅助函数

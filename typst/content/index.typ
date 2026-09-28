@@ -27,7 +27,7 @@ Undergraduate student at *Hongyi Honor College*, School of Computer Science, *Wu
   #ui.entry(
     "LAMP,UCAS",
     date: "2026.9 - ",
-    logo: image("./imgs/whu.png", alt: "武汉大学"),
+    logo: image("./imgs/ucas.svg", alt: "中国科学院大学"),
   )[Intern]
 ]
 
