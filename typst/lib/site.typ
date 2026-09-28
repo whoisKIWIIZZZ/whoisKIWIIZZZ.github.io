@@ -1,12 +1,13 @@
 /*******************************************************************************
-页面模板
+页面骨架
 
-两种版式共用一套骨架：
+标记与 guanchengwan.github.io 的 DOM 一一对应：
 
-  layout: "profile"  侧栏 + 正文（首页）
-  layout: "doc"      单栏正文（CV / Projects / Memoir）
+  .masthead > .masthead__inner-wrap > .masthead__menu > .greedy-nav
+  #main > (.sidebar > .profile_box) + (.page > .page__inner-wrap > .page__content)
+  .page__footer > footer
 
-数学公式、脚注、交叉引用在 HTML 下的渲染规则也放在这里。
+数学公式与脚注在 HTML 下的渲染规则也放在这里。
 *******************************************************************************/
 
 
@@ -33,13 +34,13 @@
   content
 }
 
-/// 脚注：正文里放上标，注文收进文末的脚注区
+/// 脚注编号
 #let show-notes(content) = {
   set footnote(numbering: "*")
   content
 }
 
-/// 图片说明统一放在图片下方
+/// 图片说明放在图片下方
 #let show-figures(content) = {
   show figure: it => if target() == "html" {
     html.figure(it.caption + it.body)
@@ -52,24 +53,25 @@
 // 顶栏
 // ─────────────────────────────────────────────────────────────────────────────
 
-#let nav-bar(links) = html.elem("header", attrs: (class: "masthead"), {
+#let nav-bar(links) = html.elem("div", attrs: (class: "masthead"), {
   html.elem("div", attrs: (class: "masthead__inner-wrap"), {
-    html.elem("nav", attrs: (class: "greedy-nav", id: "site-nav"), {
-      html.elem("ul", attrs: (class: "visible-links"), {
-        for (href, label) in links {
-          html.elem(
-            "li",
-            attrs: (class: "masthead__menu-item" + (if href == "/" { " masthead__menu-item--home" } else { "" })),
-            { html.a(href: href, label) },
-          )
-        }
-      })
-      html.elem("ul", attrs: (class: "hidden-links"), {})
-      html.elem("div", attrs: (class: "nav-actions"), {
-        html.elem("button", attrs: (class: "theme-toggle", type: "button", aria-label: "切换深浅色"), {})
-        html.elem("button", attrs: (class: "nav-toggle", type: "button", aria-label: "菜单"), {
-          html.elem("span", attrs: (class: "navicon"), {})
+    html.elem("div", attrs: (class: "masthead__menu"), {
+      html.elem("nav", attrs: (id: "site-nav", class: "greedy-nav"), {
+        html.elem("button", attrs: (type: "button", class: "close"), {
+          html.elem("div", attrs: (class: "navicon"), {})
         })
+        html.elem("ul", attrs: (class: "visible-links"), {
+          for (href, label) in links {
+            // 首页那一项在窄屏下由 CSS 藏起来，与参考站一致
+            let home = if href == "/" { " masthead__menu-home-item" } else { "" }
+            html.elem(
+              "li",
+              attrs: (class: "masthead__menu-item" + home),
+              { html.a(href: href, label) },
+            )
+          }
+        })
+        html.elem("ul", attrs: (class: "hidden-links hidden"), {})
       })
     })
   })
@@ -84,10 +86,10 @@
   content,
   title: "Shouzhuo Yi",
   lang: "zh",
-  layout: "doc",
   nav: (),
   sidebar: (),
-  footer-elements: (),
+  footer-copyright: "",
+  footer-follow: (),
   css: (),
   icon: "/assets/favicon.ico",
   js-scripts: (),
@@ -103,10 +105,10 @@
     {
       html.head({
         html.meta(charset: "utf-8")
-        html.meta(name: "viewport", content: "width=device-width, initial-scale=1")
         html.title(title)
         html.link(rel: "icon", href: icon)
-        html.meta(name: "theme-color", content: "#f7f2e6")
+        html.meta(name: "theme-color", content: "#ffffff")
+        html.meta(name: "viewport", content: "width=device-width, initial-scale=1")
 
         for (href) in css {
           html.link(rel: "stylesheet", href: href)
@@ -119,8 +121,8 @@
       html.body({
         nav-bar(nav)
 
-        html.elem("div", attrs: (id: "main"), {
-          html.elem("aside", attrs: (class: "sidebar"), sidebar.join())
+        html.elem("div", attrs: (id: "main", role: "main"), {
+          html.elem("div", attrs: (class: "sidebar sticky"), sidebar.join())
           html.elem("article", attrs: (class: "page"), {
             html.elem("div", attrs: (class: "page__inner-wrap"), {
               html.elem("section", attrs: (class: "page__content"), content)
@@ -128,13 +130,19 @@
           })
         })
 
-        html.elem("footer", attrs: (class: "page__footer"), {
+        html.elem("div", attrs: (class: "page__footer"), {
           html.elem("footer", attrs: (:), {
-            for (i, element) in footer-elements.enumerate() {
-              if i > 0 {
-                html.elem("span", attrs: (class: "footer-sep"), "·")
-              }
-              element
+            if footer-copyright != "" {
+              html.elem("div", attrs: (class: "page__footer-copyright"), footer-copyright)
+            }
+            if footer-follow.len() > 0 {
+              html.elem("div", attrs: (class: "page__footer-follow"), {
+                html.elem("ul", attrs: (:), {
+                  for (href, label) in footer-follow {
+                    html.elem("li", attrs: (:), { html.a(href: href, label) })
+                  }
+                })
+              })
             }
           })
         })

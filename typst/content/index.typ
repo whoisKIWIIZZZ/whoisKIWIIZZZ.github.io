@@ -1,10 +1,14 @@
-#import "../config.typ": home, ui
-#show: home
+#import "../config.typ": template, ui
+#show: template
 
-#ui.masthead(
-  "易守拙 - Shouzhuo Yi",
-  [Undergraduate student at *Hongyi Honor College*, School of Computer Science, *Wuhan University* .],
-)
+#ui.title("易守拙 - Shouzhuo Yi")
+
+Undergraduate student at *Hongyi Honor College*, School of Computer Science, *Wuhan University* .
+
+#ui.quote[
+  _花儿育种而凋 / 我们学会淡忘_ \
+  _Flowers bloom only to wither/ We learn to let them fade_
+]
 
 #ui.section("Education")[
   #ui.entry(
@@ -138,4 +142,14 @@
       (path: image("./imgs/album4.jpg", alt: "溯江寻兰赋"),),
     ),
   )
+]
+
+#ui.section("Contact")[
+  - *Email:* #link("mailto:yishouzhuo@whu.edu.cn")[yishouzhuo\@whu.edu.cn]
+  - *GitHub:* #link("https://github.com/whoisKIWIIZZZ")[whoisKIWIIZZZ]
+  - *WeChat:* yisz0519
+  - *NetEase Music:* kiwiizzz
+  - *Bilibili:* #link("https://space.bilibili.com/454587686")[kiwiizzz]
+  - *CV:* #link("https://whoiskiwiizzz.github.io/CV/")[CV]
+  - *Address:* E514, School of Computer Science, Wuhan University
 ]
