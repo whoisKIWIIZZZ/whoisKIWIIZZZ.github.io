@@ -33,15 +33,10 @@
   "/": "Homepage",
   "/CV/": "CV",
   "/Projects/": "Projects",
-  "/Memoir/": "Memoir",
   "/Awards/": "Awards",
 )
 
-#let footer-follow = (
-  ("https://github.com/whoisKIWIIZZZ", "GitHub"),
-  ("https://space.bilibili.com/454587686", "Bilibili"),
-  ("https://whoiskiwiizzz.github.io/CV/", "CV"),
-)
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 人物侧栏
@@ -51,15 +46,15 @@
 // fab fa-github、fas fa-music、fas fa-file-pdf 等。
 // ─────────────────────────────────────────────────────────────────────────────
 #let profile = ui.profile(
-  image("/content/imgs/me.jpg", alt: "易守拙"),
+  image("content/imgs/me.jpg", alt: "易守拙"),
   "易守拙 (Shouzhuo Yi)",
   bio: "Hongyi Honor College, School of Computer Science, Wuhan University",
   links: (
     ("fas fa-envelope", "Email", "mailto:yishouzhuo@whu.edu.cn"),
     ("fab fa-github", "GitHub", "https://github.com/whoisKIWIIZZZ"),
     ("fas fa-graduation-cap", "Google Scholar", "https://scholar.google.com/"),
-    // Font Awesome 5 免费版没有 fa-bilibili，用 fa-play 表示视频站
-    ("fas fa-play", "Bilibili", "https://space.bilibili.com/454587686"),
+    // // Font Awesome 5 免费版没有 fa-bilibili，用 fa-play 表示视频站
+    // ("fas fa-play", "Bilibili", "https://space.bilibili.com/454587686"),
   ),
 )
 
@@ -68,8 +63,7 @@
   lang: "zh",
   nav: nav-links,
   sidebar: (profile,),
-  footer-copyright: "© " + str(datetime.today().year()) + " Shouzhuo Yi",
-  footer-follow: footer-follow,
+  footer-copyright: "© " + str(datetime.today().year()) + " Shouzhuo Yi.Thx Typst!",
   css: css,
   js-scripts: js-scripts,
 )
