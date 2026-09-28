@@ -5,9 +5,18 @@
 // 站点外观
 //
 // 版式来自 guanchengwan.github.io，样式表只有一份：assets/site.css。
-// Font Awesome 走 CDN，类名用 "fas fa-envelope" 这种两段写法。
+//
+// 字体与参考站完全一致，一共三套：
+//   Trebuchet MS  正文与界面（参考站的基准字体，系统自带，零下载）
+//   Fraunces      大标题（参考站 .founder-hero__title 用的那套）
+//   Sora          拉开字距的大写标签（参考站 .founder-hero__eyebrow 用的那套）
+//
+// 参考站自己是从 fonts.googleapis.com 引的，那边在国内访问不稳，
+// 这里换 jsdelivr 上的 fontsource，同一批字体文件，unicode-range 分片一致。
 // ─────────────────────────────────────────────────────────────────────────────
 #let css = (
+  "https://cdn.jsdelivr.net/npm/@fontsource-variable/fraunces@5.3.0/index.css",
+  "https://cdn.jsdelivr.net/npm/@fontsource-variable/sora@5.3.0/index.css",
   "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css",
   "/assets/site.css",
 )

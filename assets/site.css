@@ -36,12 +36,22 @@ html {
     min-height: 100%;
 }
 
+/* 参考站的三套字体。
+   正文与界面保持 Trebuchet MS（参考站的基准字体，系统自带），
+   Fraunces 与 Sora 按参考站给它们的位置用：大标题 / 大写标签。
+   中文不在这三套里，回落到系统中文字体，与参考站的行为一致。 */
+:root {
+    --font-text: "Trebuchet MS", Helvetica, "PingFang SC", "Microsoft YaHei", sans-serif;
+    --font-display: "Fraunces Variable", "Fraunces", Georgia, "Songti SC", "SimSun", Times, serif;
+    --font-label: "Sora Variable", "Sora", "Trebuchet MS", Helvetica, "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
 body {
     margin: 0;
     padding: 0;
     padding-bottom: 0em;
     color: #494e52;
-    font-family: "Trebuchet MS", Helvetica, "PingFang SC", "Microsoft YaHei", sans-serif;
+    font-family: var(--font-text);
     line-height: 1.5;
 }
 
@@ -90,6 +100,23 @@ nav li ol {
 
 a {
     color: #224b8d;
+}
+
+.hidden {
+    display: none;
+    visibility: hidden;
+}
+
+.visually-hidden,
+.screen-reader-text,
+.screen-reader-text span,
+.screen-reader-shortcut {
+    position: absolute !important;
+    clip: rect(1px, 1px, 1px, 1px);
+    height: 1px !important;
+    width: 1px !important;
+    border: 0 !important;
+    overflow: hidden;
 }
 
 h1,
@@ -462,14 +489,18 @@ greedy-nav：放不下的导航项收进右侧下拉
     transform: rotate3d(0, 0, 1, -45deg);
 }
 
-/* 主题切换按钮。参考站没有这个功能，本站一直有，
-   做成导航里的普通一项，外观与其它导航项一致 */
+/* 主题切换按钮。参考站没有这个功能，本站一直有。
+   位置借用参考站给汉堡按钮的写法：绝对定位贴在导航右端，
+   但要往左让出汉堡按钮的位置，两者同时出现时不叠在一起。 */
 .greedy-nav .theme-toggle {
+    position: absolute;
+    top: 0;
+    right: 44px;
+    height: 100%;
+    width: 1.5em;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100%;
-    margin: 0 1rem;
     padding: 0;
     border: 0;
     background: none;
@@ -738,7 +769,10 @@ greedy-nav：放不下的导航项收进右侧下拉
 
 .page__title {
     margin-top: 0;
-    line-height: 1;
+    font-family: var(--font-display);
+    font-size: 1.6em;
+    font-weight: 600;
+    line-height: 1.15;
 }
 
 .page__lead {
@@ -750,6 +784,34 @@ greedy-nav：放不下的导航项收进右侧下拉
     margin-top: 1em;
     padding-bottom: 0.5em;
     border-bottom: 1px solid #f2f3f3;
+}
+
+/* 条目标题、卡片标题、论文标题、曲目标题：跟参考站
+   .founder-pillars__card h2 一致用 Fraunces。
+   侧栏姓名不在此列——参考站那里是 Trebuchet，保持原样。 */
+
+.entry-title,
+.card-title,
+.paper-title,
+.track-title {
+    font-family: var(--font-display);
+    font-weight: 600;
+}
+
+/* 日期、序号、小标签：Sora 的大写拉开字距 */
+
+.entry-date,
+.card-date,
+.interest-index,
+.card-index,
+.track-no,
+.track-date,
+.card-meta-key,
+.theme-toggle,
+.greedy-nav a,
+.page__footer-copyright,
+.page__footer-follow li {
+    font-family: var(--font-label);
 }
 
 .page__content p,
@@ -1012,6 +1074,16 @@ greedy-nav：放不下的导航项收进右侧下拉
 Tufte 那套已经删掉，这里没有和它打架的规则。
 配色一律取自上面用过的灰阶，不引入新颜色。
 *******************************************************************************/
+
+/* 章节标题：字号沿用参考站的 h2，换成 Fraunces */
+
+.sect-title {
+    margin: 1.4em 0 0.5em;
+    font-family: var(--font-display);
+    font-size: 1.35em;
+    font-weight: 600;
+    line-height: 1.2;
+}
 
 /* 条目 */
 
@@ -1367,21 +1439,6 @@ pre:hover .copy-button,
     border-color: #224b8d;
     color: #224b8d;
 }
-
-/* 屏幕阅读器专用 */
-
-.sr-label {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    margin: -1px;
-    padding: 0;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
-    border: 0;
-}
-
 
 /*******************************************************************************
 本站新增：深色模式

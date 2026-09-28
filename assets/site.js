@@ -41,13 +41,12 @@
   }
 
   function initTheme() {
-    // 按钮做成导航里的普通一项，外观与其它导航项一致。
-    // 必须包在 li 里：visible-links 是 display:table，裸 button 会排歪。
-    var host = document.querySelector(".greedy-nav .visible-links");
-    if (!host) return;
+    // 按钮绝对定位在导航右端（CSS 里借用了参考站给汉堡按钮的写法），
+    // 所以直接挂在 nav 上，不进 visible-links 的表格流，
+    // 也不会被 greedy-nav 的溢出逻辑挪进下拉
+    var nav = document.getElementById("site-nav");
+    if (!nav) return;
 
-    var item = document.createElement("li");
-    item.className = "masthead__menu-item theme-toggle-item";
     button = document.createElement("button");
     button.className = "theme-toggle";
     button.type = "button";
@@ -61,8 +60,7 @@
       }
       apply(next);
     });
-    item.appendChild(button);
-    host.appendChild(item);
+    nav.appendChild(button);
     apply(current());
 
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function (e) {
@@ -133,6 +131,9 @@
       });
       pushed = drop;
 
+      // 没有溢出项时保持 .hidden，否则空的下拉框会露一个白角出来
+      hidden.classList.toggle("hidden", drop.length === 0);
+      toggle.classList.toggle("close", false);
       toggle.style.display = drop.length > 0 ? "block" : "none";
       nav.classList.toggle("greedy-nav--short", drop.length > 0);
     }
@@ -149,7 +150,6 @@
         hidden.classList.add("hidden");
       }
     });
-
     layout();
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(layout);
     window.addEventListener("resize", layout);
