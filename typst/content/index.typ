@@ -33,9 +33,7 @@ Undergraduate student at *Hongyi Honor College*, School of Computer Science, *Wu
 
 #ui.section("Research Interests")[
   #ui.interests((
-    "Source-Free Domain Adaptation",
-    "Neural Cellular Automata",
-    "World Model",
+    "Source-Free Domain Adaptation,Neural Cellular Automata,World Model",
   ))
 ]
 
@@ -118,7 +116,7 @@ Undergraduate student at *Hongyi Honor College*, School of Computer Science, *Wu
       ),
       (
         title: [*虹* _ VOL\.2 EP_],
-        artists: [Artists: kiwiizzz,NeonNeko,北洄,DJ Zeng, $quad quad quad$L?NX,L350iR,L1ghtF4ll,crash909☆],
+        artists: [Artists: kiwiizzz,NeonNeko,北洄,DJ Zeng,\   $quad quad quad$L?NX,L350iR,L1ghtF4ll,crash909☆],
         album: [Macrame Music & 未界名],
         date: "2023.3.15",
       ),
@@ -139,7 +137,7 @@ Undergraduate student at *Hongyi Honor College*, School of Computer Science, *Wu
       (path: image("./imgs/album1.jpg", alt: "BACK 2 U"),),
       (path: image("./imgs/album2.jpg", alt: "虹"),),
       (path: image("./imgs/album3.jpg", alt: "栩栩 Lifelike"),),
-      (path: image("./imgs/album4.jpg", alt: "溯江寻兰赋"),),
+      (path: image("./imgs/album4.jpg", alt: "「溯江寻兰赋」"),),
     ),
   )
 ]
@@ -147,9 +145,5 @@ Undergraduate student at *Hongyi Honor College*, School of Computer Science, *Wu
 #ui.section("Contact")[
   - *Email:* #link("mailto:yishouzhuo@whu.edu.cn")[yishouzhuo\@whu.edu.cn]
   - *GitHub:* #link("https://github.com/whoisKIWIIZZZ")[whoisKIWIIZZZ]
-  - *WeChat:* yisz0519
-  - *NetEase Music:* kiwiizzz
-  - *Bilibili:* #link("https://space.bilibili.com/454587686")[kiwiizzz]
   - *CV:* #link("https://whoiskiwiizzz.github.io/CV/")[CV]
-  - *Address:* E514, School of Computer Science, Wuhan University
 ]
