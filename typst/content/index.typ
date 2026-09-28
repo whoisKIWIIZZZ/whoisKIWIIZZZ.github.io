@@ -1,27 +1,5 @@
 #import "../config.typ": home, ui
-#show: home.with(
-  sidebar: (
-    ui.identity(
-      image("./imgs/me.jpg", alt: "易守拙"),
-      "易守拙",
-      latin: "Shouzhuo Yi",
-      affiliation: ("WHU", "School of Computer Science, Wuhan University"),
-      motto: [
-        _花儿育种而凋 / 我们学会淡忘_ \
-        _Flowers bloom only to wither/ We learn to let them fade_
-      ],
-    ),
-    ui.side-block("联系", ui.contact-list((
-      ("Email", link("mailto:yishouzhuo@whu.edu.cn")[yishouzhuo\@whu.edu.cn]),
-      ("GitHub", link("https://github.com/whoisKIWIIZZZ")[whoisKIWIIZZZ]),
-      ("WeChat", "yisz0519"),
-      ("网易云", "kiwiizzz"),
-      ("Bilibili", link("https://space.bilibili.com/454587686")[kiwiizzz]),
-      ("CV", link("https://whoiskiwiizzz.github.io/CV/")[CV]),
-      ("地址", [E514, School of Computer Science, Wuhan University]),
-    ))),
-  ),
-)
+#show: home
 
 #ui.masthead(
   "易守拙 - Shouzhuo Yi",

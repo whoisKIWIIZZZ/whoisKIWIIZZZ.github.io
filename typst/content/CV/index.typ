@@ -1,9 +1,9 @@
-#import "../../config.typ": template, tufted
+#import "../../config.typ": template, ui
 #show: template.with(title: "易守拙 (Yi Shouzhuo) - CV")
 
 = 易守拙 (Yi Shouzhuo)
 
-#tufted.margin-note[
+#ui.meta[
   武汉大学计算机学院 \
   2024级本科生 \
   Email: #link("mailto:yishouzhuo@whu.edu.cn")[yishouzhuo\@whu.edu.cn] \

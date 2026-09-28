@@ -1,4 +1,4 @@
-#import "../../../config.typ": html-grid, template, tufted
+#import "../../../config.typ": template, ui
 #show: template.with(title: "Memoir")
 #show "，": ","
 #show "。": "."

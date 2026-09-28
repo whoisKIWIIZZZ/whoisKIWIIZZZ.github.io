@@ -585,9 +585,19 @@ def inject_page_navigation() -> bool:
             # 先清除已有的翻页导航（保证增量构建时顺序变化也能正确更新）
             content = re.sub(r'<nav class="page-nav">.*?</nav>\s*', '', content, flags=re.DOTALL)
 
-            # 在第一个 <section> 之后插入导航
-            content = re.sub(r"(<section>)", r"\1\n" + nav_html, content, count=1)
-            html_file.write_text(content, encoding="utf-8")
+            # 插到正文 section 的收尾处
+            new_content, replaced = re.subn(
+                r'(<section class="page__content">.*?)(</section>)',
+                lambda m: m.group(1) + "\n" + nav_html + "\n" + m.group(2),
+                content,
+                count=1,
+                flags=re.DOTALL,
+            )
+            if replaced == 0:
+                print(f"  ⚠ {html_file} 里找不到 page__content，跳过")
+                continue
+
+            html_file.write_text(new_content, encoding="utf-8")
             total_injected += 1
 
     if total_injected > 0:

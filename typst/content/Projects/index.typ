@@ -1,4 +1,4 @@
-#import "../../config.typ": html-grid, template, tufted
+#import "../../config.typ": template, ui
 #show: template.with(title: "Project: Rust-Minimeter")
 
 #let hr() = html.elem("hr")

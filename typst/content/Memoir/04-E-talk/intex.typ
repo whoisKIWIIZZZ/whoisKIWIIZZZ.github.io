@@ -1,4 +1,4 @@
-#import "../../../config.typ": html-grid, template, tufted
+#import "../../../config.typ": template, ui
 #show: template.with(title: "Memoir")
 #show "，": ","
 #show "。": "."
@@ -43,7 +43,7 @@
 很多焦虑都是来自于以目前的实力难以面对并解决将来的困难，而且忽视了人在这个过程中本身必定会有的成长\
 因此对于大部分想不明白的人来说不去想这个就是一个解决方案\
 可惜这样的不焦虑是非常容易被击溃的\
-#tufted.margin-note[
+#ui.meta[
   #box(fill: silver.lighten(50%), inset: 5pt, radius: 3pt)[
     2/24/2026 w/ BJHH
   ]
@@ -64,7 +64,7 @@
 *提问者*: 你觉得我们还有继续下去的必要吗?\
 *回答者*: (没有回答)\
 
-#tufted.margin-note[
+#ui.meta[
   #box(fill: silver.lighten(50%), inset: 5pt, radius: 3pt)[
     3/15/2026 w/ 337
   ]

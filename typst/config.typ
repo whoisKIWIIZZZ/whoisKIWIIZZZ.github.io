@@ -1,44 +1,22 @@
-#import "tufted-lib/tufted.typ" as tufted-lib
-#import "lib/shell.typ": profile-web
-#import "lib/ui.typ"
-
-#let tufted = tufted-lib
-#let html-grid = tufted.html-grid
-#let today = datetime.today()
-#let year = today.year()
+#import "lib/site.typ": page
+#import "lib/components.typ" as ui
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 站点外观
 //
-// 字体走 fontsource CDN：英文 EB Garamond（老式数字），中文 Noto Serif SC。
-// 样式表顺序即层叠顺序，site.css 在最后，负责覆盖前面所有规则。
+// 字体走 fontsource CDN：
+//   Fraunces        标题，柔软衬线，带一点旧印刷的味道
+//   Source Serif 4  正文，为屏幕设计，小字号下笔画足够
+//   Noto Serif SC   中文
+// 样式表只有一份，assets/site.css。
 // ─────────────────────────────────────────────────────────────────────────────
 #let fonts = (
-  "https://cdn.jsdelivr.net/npm/@fontsource/eb-garamond@5.3.0/400.css",
-  "https://cdn.jsdelivr.net/npm/@fontsource/eb-garamond@5.3.0/400-italic.css",
-  "https://cdn.jsdelivr.net/npm/@fontsource/eb-garamond@5.3.0/500.css",
-  "https://cdn.jsdelivr.net/npm/@fontsource/eb-garamond@5.3.0/600.css",
-  "https://cdn.jsdelivr.net/npm/@fontsource/eb-garamond@5.3.0/700.css",
-  "https://cdn.jsdelivr.net/npm/@fontsource/noto-serif-sc@5.3.0/400.css",
-  "https://cdn.jsdelivr.net/npm/@fontsource/noto-serif-sc@5.3.0/500.css",
-  "https://cdn.jsdelivr.net/npm/@fontsource/noto-serif-sc@5.3.0/600.css",
-  "https://cdn.jsdelivr.net/npm/@fontsource/noto-serif-sc@5.3.0/700.css",
+  "https://cdn.jsdelivr.net/npm/@fontsource-variable/fraunces@5.3.0/index.css",
+  "https://cdn.jsdelivr.net/npm/@fontsource-variable/source-serif-4@5.3.0/index.css",
+  "https://cdn.jsdelivr.net/npm/@fontsource-variable/noto-serif-sc@5.3.0/index.css",
 )
 
-#let stylesheets = fonts + (
-  "https://cdnjs.cloudflare.com/ajax/libs/tufte-css/1.8.0/tufte.min.css",
-  "/assets/tufted.css",
-  "/assets/theme.css",
-  "/assets/custom.css",
-  "/assets/site.css",
-)
-
-#let scripts = (
-  "/assets/code-blocks.js",
-  "/assets/format-headings.js",
-  "/assets/theme-toggle.js",
-  "/assets/contributions.js",
-)
+#let scripts = ("/assets/code-blocks.js", "/assets/site.js")
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 顶栏导航
@@ -53,27 +31,56 @@
 )
 
 #let footer-links = (
-  "©" + str(year) + " Shouzhuo Yi",
+  "©" + str(datetime.today().year()) + " Shouzhuo Yi",
   [Powered by #link("https://github.com/Yousa-Mirage/Tufted-Blog-Template")[Tufted-Blog-Template of _Typst_]],
 )
 
-// 单栏版式：CV / Projects / Memoir 等长文页面
-#let template = tufted.tufted-web.with(
-  header-links: nav-links,
-  lang: "zh",
+// ─────────────────────────────────────────────────────────────────────────────
+// 人物侧栏
+//
+// 每个页面都带同一块侧栏。图片按项目根给绝对路径，
+// 因为这里定义、页面在 content/ 下，字符串字面量不在页面里。
+// ─────────────────────────────────────────────────────────────────────────────
+#let profile = (
+  html.elem("div", attrs: (class: "profile"), {
+    ui.avatar(image("/content/imgs/me.jpg", alt: "易守拙"))
+    ui.author("易守拙", bio: "Shouzhuo Yi · WHU")
+  }),
+  ui.side-block("题词", [
+    _花儿育种而凋 / 我们学会淡忘_ \
+    _Flowers bloom only to wither/ We learn to let them fade_
+  ]),
+  ui.side-block("联系", ui.contact-list((
+    ("Email", link("mailto:yishouzhuo@whu.edu.cn")[yishouzhuo\@whu.edu.cn]),
+    ("GitHub", link("https://github.com/whoisKIWIIZZZ")[whoisKIWIIZZZ]),
+    ("WeChat", "yisz0519"),
+    ("网易云", "kiwiizzz"),
+    ("Bilibili", link("https://space.bilibili.com/454587686")[kiwiizzz]),
+    ("CV", link("https://whoiskiwiizzz.github.io/CV/")[CV]),
+    ("地址", [E514, School of Computer Science, Wuhan University]),
+  ))),
+)
+
+// 单栏版式：CV / Projects / Memoir
+#let template = page.with(
   title: "Shouzhuo Yi",
-  css: stylesheets,
+  lang: "zh",
+  layout: "doc",
+  nav: nav-links,
+  sidebar: profile,
+  css: fonts + ("/assets/site.css",),
   js-scripts: scripts,
-  header-elements: (),
   footer-elements: footer-links,
 )
 
 // 双栏版式：首页
-#let home = profile-web.with(
-  header-links: nav-links,
-  lang: "zh",
+#let home = page.with(
   title: "Shouzhuo Yi",
-  css: stylesheets,
+  lang: "zh",
+  layout: "profile",
+  nav: nav-links,
+  sidebar: profile,
+  css: fonts + ("/assets/site.css",),
   js-scripts: scripts,
   footer-elements: footer-links,
 )

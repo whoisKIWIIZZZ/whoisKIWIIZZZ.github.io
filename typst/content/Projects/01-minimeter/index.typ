@@ -1,10 +1,10 @@
-#import "../../../config.typ": html-grid, template, tufted
+#import "../../../config.typ": template, ui
 #show: template.with(title: "Project: Rust-Minimeter")
 
 #let hr() = html.elem("hr")
 
 // --- 侧边栏：放置项目标签与元数据 ---
-#tufted.margin-note[
+#ui.meta[
   #box(fill: silver.lighten(50%), inset: 5pt, radius: 3pt)[
     *Tech Stack:* Rust
   ] \

@@ -1,4 +1,4 @@
-#import "../../../config.typ": html-grid, template, tufted
+#import "../../../config.typ": template, ui
 #show: template.with(title: "Memoir")
 #show "，": ","
 #show "。": "."
@@ -10,7 +10,7 @@
 在二曜小路旁,延庆里大抵算最幸运的,在修好重建后以商圈形式回到了大众的目光中;而同兴里和同德里呢?虽然离延庆里不过百余步,却落得一个被围着等待拆迁,另一个直接被拆干净,无法找到的下场.重建后的“同兴里”换上了胜利街的门牌,而翻越拆迁围栏,走过小路之后,才勉强寻得同兴里的旧址.甚至一年半前大学招生组的宣讲地点现在也沦为被拆除的境地.名字虽仍在地图上,而它们所指向的生活却早已退场,只留下空余的记忆和遗憾.
 
 ——记与母亲一起寻其儿时住所无果之感
-#tufted.margin-note[
+#ui.meta[
   #box(fill: silver.lighten(50%), inset: 5pt, radius: 3pt)[
     2/3/2026
   ]
@@ -18,7 +18,7 @@
 #hr()
 = D 新年
 于是我决定停在这步履蹒跚的终点，以此刻的停歇作为勋章，庆祝我在黑暗中又生生熬过了一个黎明.
-#tufted.margin-note[
+#ui.meta[
   #box(fill: silver.lighten(50%), inset: 5pt, radius: 3pt)[
     2/17/2026
   ]

@@ -1,20 +1,9 @@
 /*******************************************************************************
-纸墨 (Paper & Ink) — 页面组件库
+页面组件
 
-所有页面组件都在这里定义，content/ 下的页面只负责调用，不写样式类名。
-样式定义在 assets/site.css，改外观只改 CSS，不改这里。
-
-用法：
-
-  #import "../config.typ": home, ui
-
-  #ui.masthead("易守拙 - Shouzhuo Yi")[ ... ]
-  #ui.section("Education")[
-    #ui.entry("武汉大学", date: "2024 - 2028", logo: "./imgs/whu.png")[ ... ]
-  ]
-
-组件里的图片路径由 Typst 按字符串字面量所在的位置解析，
-所以在 content/index.typ 里写 "./imgs/me.jpg" 与原来一致。
+页面只调用这里的组件，不写 class 名；外观全在 assets/site.css。
+组件里的图片路径由 Typst 按 `image()` 调用处解析，所以页面里写
+`image("./imgs/me.jpg")` 与原来一致，直接写字符串则按项目根解析。
 *******************************************************************************/
 
 
@@ -22,21 +11,25 @@
 // 基础零件
 // ─────────────────────────────────────────────────────────────────────────────
 
-/// 图片取值归一化。
-///
-/// Typst 在 `image()` 调用处解析相对路径，而不是在字符串字面量所在处。
-/// 所以组件里不能直接把页面传来的字符串喂给 `image()`。
-/// 两种写法都接受：
-///   - 字符串：按项目根解析，必须以 "/" 开头，例如 "/content/imgs/me.jpg"
-///   - content：页面自己写 `image("./imgs/me.jpg")`，路径相对页面文件解析
+/// 图片取值归一化：字符串按项目根解析，content 原样透传
 #let img(p, alt: "") = if type(p) == str { image(p, alt: alt) } else { p }
 
-/// 带边框的图片（BLOG 正文里插图用这个）
+/// 带边框的图片
 #let figure(path, alt: "", cls: "") = html.elem(
   "figure",
   attrs: (class: "figure" + (if cls == "" { "" } else { " " + cls })),
   img(path, alt: alt),
 )
+
+/// 一排链接按钮
+#let links(items) = html.elem("div", attrs: (class: "links"), {
+  for (label, href) in items {
+    html.elem("a", attrs: (href: href, class: "link-chip"), {
+      html.elem("span", attrs: (:), label)
+      html.elem("span", attrs: (class: "link-arrow"), "→")
+    })
+  }
+})
 
 /// 联系表：`entries` 为 (标签, 内容) 序列
 #let contact-list(entries) = html.elem("dl", attrs: (class: "contact"), {
@@ -46,42 +39,32 @@
   }
 })
 
+/// 页面顶部的元信息面板（项目页的技术栈、版本之类）
+#let meta(body) = html.elem("div", attrs: (class: "meta"), body)
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 侧栏
 // ─────────────────────────────────────────────────────────────────────────────
 
-/// 身份块：照片、姓名、单位、题词
-#let identity(
-  photo,
-  name,
-  latin: none,
-  affiliation: (),
-  motto: none,
-) = html.elem("div", attrs: (class: "identity"), {
-  html.elem("div", attrs: (class: "identity-photo"), {
-    img(photo, alt: name)
-  })
-  html.elem("h1", attrs: (class: "identity-name"), name)
-  if latin != none {
-    html.elem("p", attrs: (class: "identity-latin"), latin)
-  }
-  if affiliation.len() > 0 {
-    html.elem("p", attrs: (class: "identity-affiliation"), {
-      for (i, line) in affiliation.enumerate() {
-        if i > 0 { html.br() }
-        line
-      }
-    })
-  }
-  if motto != none {
-    html.elem("p", attrs: (class: "identity-motto"), motto)
+/// 头像框
+#let avatar(photo, name: "", cls: "") = html.elem(
+  "div",
+  attrs: (class: "author__avatar" + (if cls == "" { "" } else { " " + cls })),
+  img(photo, alt: name),
+)
+
+/// 姓名与头衔
+#let author(name, bio: none) = html.elem("div", attrs: (class: "author__content"), {
+  html.elem("h2", attrs: (class: "author__name"), name)
+  if bio != none {
+    html.elem("p", attrs: (class: "author__bio"), bio)
   }
 })
 
-/// 侧栏小节：`title` 为栏目标题
+/// 侧栏整块
 #let side-block(title, body) = html.elem("div", attrs: (class: "side-block"), {
-  html.elem("h2", attrs: (class: "side-title"), title)
+  html.elem("h3", attrs: (class: "side-title"), title)
   html.elem("div", attrs: (class: "side-body"), body)
 })
 
@@ -90,11 +73,10 @@
 // 正文区块
 // ─────────────────────────────────────────────────────────────────────────────
 
-/// 首页主栏开头的大标题区
-#let masthead(name, tagline) = html.elem("header", attrs: (class: "masthead"), {
-  html.elem("h1", attrs: (class: "masthead-name"), name)
-  html.elem("p", attrs: (class: "masthead-tagline"), tagline)
-  html.elem("div", attrs: (class: "masthead-rule"), {})
+/// 页面开头的标题区
+#let masthead(name, tagline) = html.elem("header", attrs: (class: "page__head"), {
+  html.elem("h1", attrs: (class: "page__title"), name)
+  html.elem("p", attrs: (class: "page__lead"), tagline)
 })
 
 /// 章节：`title` 为栏目标题，`meta` 为右对齐补充说明
@@ -113,7 +95,7 @@
 // 条目
 // ─────────────────────────────────────────────────────────────────────────────
 
-/// 教育 / 经历条目。`body` 为副标题（机构、职位、方向等）
+/// 教育 / 经历条目。`body` 为副标题（职位、方向等）
 #let entry(title, body, date: none, logo: none) = html.elem(
   "div",
   attrs: (class: "entry"),
@@ -132,7 +114,9 @@
           html.elem("span", attrs: (class: "entry-date"), date)
         }
       })
-      html.elem("p", attrs: (class: "entry-detail"), body)
+      if body != none {
+        html.elem("p", attrs: (class: "entry-detail"), body)
+      }
     })
   },
 )
@@ -151,16 +135,6 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // 卡片
 // ─────────────────────────────────────────────────────────────────────────────
-
-/// 一排链接按钮
-#let links(items) = html.elem("div", attrs: (class: "links"), {
-  for (label, href) in items {
-    html.elem("a", attrs: (href: href, class: "link-chip"), {
-      html.elem("span", attrs: (:), label)
-      html.elem("span", attrs: (class: "link-arrow"), "→")
-    })
-  }
-})
 
 /// 项目卡片
 #let project(

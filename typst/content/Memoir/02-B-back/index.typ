@@ -1,4 +1,4 @@
-#import "../../../config.typ": html-grid, template, tufted
+#import "../../../config.typ": template, ui
 #show: template.with(title: "Memoir")
 #show "，": ","
 #show "。": "."
@@ -11,7 +11,7 @@
 
 回望校园,熟悉的备用教室,熟悉的国际部阳台,承载了多少回忆.与好友走在路上,仿佛时光回到了两年前,但多了些许迷茫.最后离校时给远在英国的小张打视频电话,英语老师说着“下次总有机会见”便道了别.下次走在路上是何时呢?
 
-#tufted.margin-note[
+#ui.meta[
   #box(fill: silver.lighten(50%), inset: 5pt, radius: 3pt)[
     1/27/2026
   ]
