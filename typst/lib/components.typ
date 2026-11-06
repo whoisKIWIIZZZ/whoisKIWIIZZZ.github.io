@@ -164,7 +164,7 @@
 #let interests(items) = html.elem("ul", attrs: (class: "interests"), {
   for (i, item) in items.enumerate() {
     html.elem("li", attrs: (class: "interest"), {
-      html.elem("span", attrs: (class: "interest-index"), numbering("01", i + 1))
+      html.elem("span", attrs: (class: "interest-index"))
       html.elem("span", attrs: (class: "interest-text"), item)
     })
   }
@@ -313,6 +313,9 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 /// 专辑：曲目表 + 封面
+//
+// 曲目可带 `link:` 字段（如网易云歌曲/专辑页），有值时在专辑
+// 行下挂一条小字链接
 #let release(items, covers) = html.elem("div", attrs: (class: "release"), {
   html.elem("ol", attrs: (class: "tracks"), {
     for (i, track) in items.enumerate() {
@@ -325,6 +328,9 @@
           }
           if track.at("artists", default: none) != none {
             html.elem("p", attrs: (class: "track-artists"), track.artists)
+          }
+          if track.at("link", default: none) != none {
+            html.elem("p", attrs: (class: "track-link"), html.a(href: track.link, "网易云音乐 ↗"))
           }
         })
         if track.at("date", default: none) != none {

@@ -1,55 +1,62 @@
 #import "../../config.typ": template, ui
-#show: template.with(title: "易守拙 (Yi Shouzhuo) - CV")
+#show: template.with(title: "Yi Shouzhuo - CV")
 
-= 易守拙 (Yi Shouzhuo)
+= Yi Shouzhuo
 
 #ui.meta[
-  武汉大学计算机学院 \
-  2024级本科生 \
+  School of Computer Science, Wuhan University \
+  Undergraduate, Class of 2028 \
   Email: #link("mailto:yishouzhuo@whu.edu.cn")[yishouzhuo\@whu.edu.cn] \
   Mobile: +86 13667280239
 ]
 
-#link("CV-PDF.pdf")[[PDF version]]\
+#link("CV-EN.pdf")[PDF (English)] \
+#link("CV-CN.pdf")[PDF (中文)] \
 
-== 教育经历
+== Education
 
-- *武汉大学计算机学院* (2024 - 2028)
-  - 专业: 计算机科学与技术 (计算机弘毅班)
-  - 绩点: 3.86/4.00 (排名6/29)
-  - 均分: 92.55/100 (排名4/29)
-  - 英语: CET-4 (608),CET-6 (557)
-  - 核心课程: 高级语言程序设计A (97), 数据结构A (97), 计算机系统基础 (88), 软件系统实践 (96),计算机组成与体系结构A(85)
+- *School of Computer Science, Wuhan University* (2024 - 2028)
+  - Major: Computer Science and Technology (Hongyi Honor Class)
+  - GPA: 3.87/4.00 (rank 5/29)
+  - Average: 92.65/100 (rank 5/29)
+  - English: CET-4 (608), CET-6 (557)
+  - Core courses: Advanced Programming Language A (97), Data Structures A (97), Computer Organization and Architecture A (85), Operating Systems A (91), Algorithm Design and Analysis (96)
 
-== 科研经历
+== Research Experience
 
-- *武汉大学智能感知与机器学习研究组* (2025.1 - 2025.7,大学生创新创业项目)
-  - 指导老师: 童旅杨博士后
-  - 研究内容: 基于胎儿先心病的多模态可解释性模型
-  - 研究成果:省级大创项目成功结题
-- *武汉大学智能感知与机器学习研究组* (2025.9 - 至今)
-  - 指导老师: 刘友发副研究员
-  - 研究内容: 基于大型视觉语言模型的无源迁移学习
-  - 研究成果: 一篇学术论文在投 (IJCAI'26)
+- *SIGMA (Intelligent Perception and Machine Learning Group), Wuhan University* (Jan. 2025 - Jul. 2025, Student Innovation and Entrepreneurship Training Program)
+  - Advisor: Dr. Lvyang Tong (Postdoctoral Researcher, School of Computer Science, Wuhan University)
+  - Topic: multimodal interpretable models for fetal congenital heart disease
+  - Output: the provincial-level project was successfully concluded
+- *SIGMA (Intelligent Perception and Machine Learning Group), Wuhan University* (Sep. 2025 - Jul. 2026)
+  - Advisor: Assoc. Prof. Youfa Liu (School of Computer Science, Wuhan University)
+  - Topic: source-free transfer learning based on large vision-language models
+  - Output: one paper in preparation
+- *LAMP (Machine Learning and Perception Lab), Univ. of Chinese Academy of Sciences* (Jul. 2026 - Present)
+  - Advisor: Prof. Tong Zhang (Tenure-track Assistant Professor, School of Electronic, Electrical and Communication Engineering, UCAS)
+  - Topic: world models
 
-== 项目经历
-- *字节跳动工程训练营*(2025.12)
-  - 项目主题:故事成片 Story-to-video
-  - 实现了“自然文本输入到视频产出”的全链路自动化,实现可视化分镜管理、单镜头编辑,并整合了图像生成、动态视频渲染及 AI 配音技术.
-  - 在小组中参与了后端LLM/TTS等模型部署工作以及后端与服务端通信链路的设计
-== 技能
+== Project Experience
 
-- *编程语言*: C++, Python
-- *工具*: LaTeX, Word,Typst
+- *ByteDance Engineering Bootcamp --- Story-to-Video* (Dec. 2025)
+  - Built the full pipeline from natural-text input to video output: visual storyboard management, per-shot editing, and integrated image generation, dynamic video rendering, and AI-powered voiceover.
+  - Contributed to the deployment of backend models (LLM/TTS) and the design of the communication links between the backend and the server.
+  - Successfully completed the ByteDance Engineering Bootcamp.
 
-== 竞赛&获奖
+== Skills
 
-- 2024-2025学年优秀学生奖学金 (校级)
-- 2024-2025第十六届蓝桥杯省赛 C/C++ 大学 A 组二等奖 (省级)
-- 2024-2025第十七届华中杯大学生数学建模挑战赛二等奖(省级)
-- 2024-2025学年优秀学生 (校级)
-- 2025-2026 全国大学生数学竞赛非数学A类二等奖(省级)
-- 2025-2026 第二届CCF算法能力大赛二等奖(省级,并入围决赛)
+- Proficient in Python/PyTorch; early research training has built up the ability to take an idea from concept to code, experiments, and parameter tuning.
+- Familiar with the essential tooling: ssh, LaTeX.
 
-== 自我评价
-具有良好的数学基础与较强的理论学习能力,学习主动,适应能力强,期望在研究工作中将理解转化为实际贡献.
+== Awards and Honors
+
+- *2026 Lei Jun Scholarship for Undergraduate Students in Computer Science* (University level)
+- *2024-2025 16th Blue Bridge Cup Provincial Contest, C/C++, University Group A --- Second Prize* (Provincial level)
+- *2025-2026 National College Mathematics Competition, Non-Mathematics Track A --- Second Prize* (Provincial level)
+- *2025-2026 2nd CCF Algorithm Capability Contest --- Second Prize (advanced to the finals)* (Provincial level)
+- *2025-2026 China Collegiate Computing Contest --- Group Programming Ladder Tournament (GPLT) --- National Third Prize* (National level)
+- *2026 National Collegiate Computer Systems Capability Contest --- Operating System Design Contest, OS Kernel Implementation Track --- National Second Prize* (National level)
+
+== Self Assessment
+
+Strong mathematical understanding and solid theoretical learning ability; self-motivated and quick to adapt; eager to turn understanding into practical contributions in challenging research and to prove my capability as a researcher.

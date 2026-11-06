@@ -18,7 +18,9 @@
   "https://cdn.jsdelivr.net/npm/@fontsource-variable/fraunces@5.3.0/index.css",
   "https://cdn.jsdelivr.net/npm/@fontsource-variable/sora@5.3.0/index.css",
   "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css",
-  "/assets/site.css",
+  // 登录过站点的浏览器缓存了旧版 CSS（曾有头像圆角残留的旧版本），
+  // 版本号变化迫使浏览器强制拉新；更新 site.css 样式后记得把 v= 递增
+  "/assets/site.css?v=2",
 )
 
 #let js-scripts = ("/assets/code-blocks.js", "/assets/site.js")
@@ -46,13 +48,13 @@
 // fab fa-github、fas fa-music、fas fa-file-pdf 等。
 // ─────────────────────────────────────────────────────────────────────────────
 #let profile = ui.profile(
-  image("content/imgs/me.jpg", alt: "易守拙"),
-  "易守拙 (Shouzhuo Yi)",
-  bio: "Hongyi Honor College, School of Computer Science, Wuhan University",
+  image("content/imgs/me.jpg", alt: "Shouzhuo Yi"),
+  "Shouzhuo Yi",
+  bio: "Hongyi Honor Class, School of Computer Science, Wuhan University",
   links: (
     ("fas fa-envelope", "Email", "mailto:yishouzhuo@whu.edu.cn"),
     ("fab fa-github", "GitHub", "https://github.com/whoisKIWIIZZZ"),
-    ("fas fa-graduation-cap", "Google Scholar", "https://scholar.google.com/"),
+    // ("fas fa-graduation-cap", "Google Scholar", "https://scholar.google.com/"),
     // // Font Awesome 5 免费版没有 fa-bilibili，用 fa-play 表示视频站
     // ("fas fa-play", "Bilibili", "https://space.bilibili.com/454587686"),
   ),

@@ -1,40 +1,47 @@
 #import "../config.typ": template, ui
 #show: template
 
-#ui.title("易守拙 - Shouzhuo Yi")
+#ui.title("Shouzhuo Yi")
 
-Undergraduate student at *Hongyi Honor College*, School of Computer Science, *Wuhan University* .
+Undergraduate student at *Hongyi Honor Class*, School of Computer Science, *Wuhan University* .
 
-#ui.quote[
-  _花儿育种而凋 / 我们学会淡忘_ \
-  _Flowers bloom only to wither/ We learn to let them fade_
-]
+// #ui.quote[
+//   _花儿育种而凋 / 我们学会淡忘_ \
+//   _Flowers bloom only to wither/ We learn to let them fade_
+// ]
 
 #ui.section("Education")[
   #ui.entry(
-    "武汉大学",
+    "Wuhan University",
     date: "2024 - 2028",
-    logo: image("./imgs/whu.png", alt: "武汉大学"),
-  )[计算机科学与技术 (计算机弘毅班)]
+    logo: image("./imgs/whu.png", alt: "WHU"),
+  )[Hongyi Honor Class,School of Computer Science]
 ]
 
 #ui.section("Experience")[
   #ui.entry(
     "SIGMA lab,WHU",
-    date: "2025.1 - 2025.7",
+    date: "Jan.2025 - Jul.2025",
     logo: image("./imgs/whu.png", alt: "武汉大学"),
   )[Research Assistant]
   #ui.entry(
-    "LAMP,UCAS",
-    date: "2026.9 - ",
+    "ARTE,UCAS",
+    date: "Sep.2026 - Present",
     logo: image("./imgs/ucas.svg", alt: "中国科学院大学"),
   )[Intern]
 ]
 
 #ui.section("Research Interests")[
-  #ui.interests((
-    "Source-Free Domain Adaptation,Neural Cellular Automata,World Model",
+   #ui.interests((
+    "Visual Representation Learning",
   ))
+  #ui.interests((
+  "World Model",
+  ))
+  #ui.interests((
+    "Source-Free Domain Adaptation",
+  ))
+
 ]
 
 #ui.section("Projects")[
@@ -79,7 +86,7 @@ Undergraduate student at *Hongyi Honor College*, School of Computer Science, *Wu
       ("View Code", "https://github.com/whoisKIWIIZZZ/SCPU-RISCV"),
     ),
   )[
-    本项目系武汉大学计算机学院“计算机系统综合设计A”课程设计作业,实现了五级流水线CPU并实现了MIDI键盘功能.
+    本项目系武汉大学计算机学院“计算机系统综合设计A”课程设计作业,实现了五级流水线CPU和MIDI键盘的高级功能.
   ]
 
   #ui.project(
@@ -113,31 +120,35 @@ Undergraduate student at *Hongyi Honor College*, School of Computer Science, *Wu
         title: [*BACK 2 U* _VIP,SINGLE_],
         album: [Macrame Music & 未界名],
         date: "2022.9.21",
+        link: "https://music.163.com/song?id=1981337373",
       ),
       (
         title: [*虹* _ VOL\.2 EP_],
         artists: [Artists: kiwiizzz,NeonNeko,北洄,DJ Zeng,\   $quad quad quad$L?NX,L350iR,L1ghtF4ll,crash909☆],
         album: [Macrame Music & 未界名],
         date: "2023.3.15",
+        link: "https://music.163.com/album?id=161568100",
       ),
       (
         title: [*栩栩 Lifelike* _kiwiizzz remix_],
         artists: [Artists: kiwiizzz,BYDGALAXY],
         album: [SELF RELEASE],
         date: "2024.1.1",
+        link: "https://music.163.com/song?id=2113490174",
       ),
       (
         title: [*溯江寻兰赋* _in_ *Words Des Flowers* _LP_],
         artists: [Artists: kiwiizzz,北洄],
         album: [Glimmer Music],
         date: "2024.2.4",
+        link: "https://music.163.com/song?id=2123780600",
       ),
     ),
     (
-      (path: image("./imgs/album1.jpg", alt: "BACK 2 U"),),
-      (path: image("./imgs/album2.jpg", alt: "虹"),),
-      (path: image("./imgs/album3.jpg", alt: "栩栩 Lifelike"),),
-      (path: image("./imgs/album4.jpg", alt: "「溯江寻兰赋」"),),
+      (path: image("./imgs/album1.jpg", alt: "虹"),),
+      (path: image("./imgs/album2.jpg", alt: "栩栩 Lifelike"),),
+      (path: image("./imgs/album3.jpg", alt: "「溯江寻兰赋」"),),
+      (path: image("./imgs/album4.jpg", alt: "BACK 2 U"),),
     ),
   )
 ]

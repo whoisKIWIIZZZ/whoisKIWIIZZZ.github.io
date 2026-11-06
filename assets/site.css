@@ -603,11 +603,12 @@ greedy-nav：放不下的导航项收进右侧下拉
 .author__avatar img {
     /* 参考站只给了 min/max-width，图片会溢出 75px 的单元格把名字盖住。
        补一条 width:100% 让它贴住单元格：窄屏填满 75px，
-       宽屏被 max-width 收到 175px，与参考站一致 */
+       宽屏被 max-width 收到 175px，与参考站一致。
+       头像照是横构图（1852×1236），按原比例完整显示成矩形，
+       参考站的 border-radius:50% 是给正方形头像用的，这里去掉不裁切 */
     width: 100%;
     max-width: 175px;
     min-width: 75px;
-    border-radius: 50%;
 }
 
 .author__content {
@@ -1321,6 +1322,11 @@ Tufte 那套已经删掉，这里没有和它打架的规则。
     font-weight: 600;
 }
 
+.track-link {
+    margin: 0;
+    font-size: 0.82em;
+}
+
 .track-album,
 .track-artists,
 .track-date {
@@ -1374,7 +1380,10 @@ Tufte 那套已经删掉，这里没有和它打架的规则。
     white-space: nowrap;
 }
 
-.meta br {
+/* Projects 页的 meta 是一排 #box 小标签，标签之间的换行 <br> 要去掉，
+   让它们向左流动排成一行；只有文字和链接的 meta（如 /CV/）不走这里，
+   换行照常生效 */
+.meta:has(span[style]) br {
     display: none;
 }
 

@@ -12,9 +12,10 @@ Tufted Blog Template 构建脚本
 支持增量编译：只重新编译修改后的文件，加快构建速度。
 
 用法:
-    uv run build.py build       # 完整构建 (HTML + PDF + 资源)
+    uv run build.py build       # 完整构建 (HTML + PDF + LaTeX 简历 + 资源)
     uv run build.py html        # 仅构建 HTML 文件
-    uv run build.py pdf         # 仅构建 PDF 文件
+    uv run build.py pdf         # 仅构建 Typst PDF 文件
+    uv run build.py latex       # 仅用 XeLaTeX 编译简历 PDF
     uv run build.py assets      # 仅复制静态资源
     uv run build.py clean       # 清理生成的文件
     uv run build.py preview     # 启动本地预览服务器（默认端口 8000）
@@ -40,6 +41,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
 import threading
 import time
 import webbrowser
@@ -59,6 +61,39 @@ CONFIG_FILE = Path("config.typ")  # 全局配置文件
 # 脚本会自动扫描这些目录下的所有 index.typ，按路径字母序排列，
 # 并从编译后的 HTML 中提取标题作为链接文字。
 NAV_COLLECTIONS = ["Projects", "Memoir", "Awards"]
+
+# ============================================================================
+# LaTeX 简历构建配置
+# ============================================================================
+
+# 需要用 XeLaTeX 编译的简历。字段说明：
+#   tex:     .tex 源文件路径（相对本脚本所在目录）
+#   publish: 编译产物的存放路径（相对本脚本所在目录，必须在 content/ 内），
+#            同时会按 content→站点根的映射发布一份到 SITE_DIR 下，
+#            即 content/CV/CV-PDF-en.pdf → 站点根 /CV/CV-PDF-en.pdf
+# 辅助文件（aux/log/xdv 等）全部写进系统临时目录，不污染 content/；
+# 增量判断复用 needs_rebuild：.tex 源码或同目录素材（photo.png/whulogo.png）
+# 更新都会触发重编。
+LATEX_JOBS = [
+    {
+        "tex": "content/CV/tex/CV.tex",
+        "publish": "content/CV/CV-PDF-en.pdf",
+    },
+]
+
+# LaTeX 编译中间产物：既不发布，也不随内容资源复制
+LATEX_SKIP_SUFFIXES = (
+    ".aux",
+    ".log",
+    ".out",
+    ".toc",
+    ".bbl",
+    ".blg",
+    ".fls",
+    ".fdb_latexmk",
+    ".synctex.gz",
+    ".xdv",
+)
 
 # ============================================================================
 # 增量编译辅助函数
@@ -678,6 +713,99 @@ def build_pdf(force: bool = False):
     return fail_count == 0
 
 
+def build_latex(force: bool = False) -> bool:
+    """
+    用 XeLaTeX 编译 LATEX_JOBS 中登记的简历 .tex，并发布 PDF。
+
+    编译在 .tex 所在目录进行（photo.png/whulogo.png 等素材按相对路径引用），
+    辅助文件输出到系统临时目录；产物先落到 content/ 下的 publish 路径，
+    再按 content→站点根的映射发布一份。跑两遍保证版式稳定。
+
+    参数:
+        force: 是否强制重建
+    """
+    if not LATEX_JOBS:
+        return True
+
+    print("正在构建 LaTeX 简历...")
+
+    success_count = 0
+    skip_count = 0
+    fail_count = 0
+
+    for job in LATEX_JOBS:
+        tex_file = Path(job["tex"])
+        publish_path = Path(job["publish"])
+        site_target = SITE_DIR / publish_path.relative_to(CONTENT_DIR)
+
+        if not tex_file.exists():
+            print(f"  ⚠ 找不到 {tex_file}，跳过。")
+            fail_count += 1
+            continue
+
+        # 增量检查：与 Typst 的 HTML/PDF 一致，用源文件 + 同目录素材判断
+        if not force and not needs_rebuild(tex_file, site_target):
+            skip_count += 1
+            continue
+
+        publish_path.parent.mkdir(parents=True, exist_ok=True)
+        site_target.parent.mkdir(parents=True, exist_ok=True)
+
+        ok = True
+        try:
+            with tempfile.TemporaryDirectory(prefix="latex-build-") as tmp_dir:
+                cmd = [
+                    "xelatex",
+                    "-interaction=nonstopmode",
+                    "-output-directory",
+                    tmp_dir,
+                    tex_file.name,
+                ]
+                # 第一遍写 aux/toc，第二遍收尾，保证目录引用稳定
+                for _ in range(2):
+                    result = subprocess.run(
+                        cmd, cwd=tex_file.parent, capture_output=True, text=True
+                    )
+                    if result.returncode != 0:
+                        print(f"  ❌ XeLaTeX 错误:\n{result.stdout[-2000:]}")
+                        ok = False
+                        break
+                if not ok:
+                    fail_count += 1
+                    continue
+
+                built_pdf = Path(tmp_dir) / f"{tex_file.stem}.pdf"
+                if not built_pdf.exists():
+                    print(f"  ❌ {tex_file} 编译后未生成 PDF")
+                    ok = False
+                else:
+                    # 双写：content/ 里留源级副本（随 git 提交），站点根发布一份
+                    shutil.copy2(built_pdf, publish_path)
+                    shutil.copy2(built_pdf, site_target)
+            if ok:
+                success_count += 1
+            else:
+                fail_count += 1
+        except FileNotFoundError:
+            print("  ❌ 未找到 xelatex 命令。请安装 TeX Live / MacTeX 并加入 PATH。")
+            fail_count += 1
+        except Exception as e:
+            print(f"  ❌ 编译 {tex_file} 时出错: {e}")
+            fail_count += 1
+
+    status_parts = []
+    if success_count > 0:
+        status_parts.append(f"编译: {success_count}")
+    if skip_count > 0:
+        status_parts.append(f"跳过: {skip_count}")
+    if fail_count > 0:
+        status_parts.append(f"失败: {fail_count}")
+
+    status_str = ", ".join(status_parts) if status_parts else "无任务"
+    print(f"✅ LaTeX 简历构建完成。{status_str}")
+    return fail_count == 0
+
+
 def copy_assets() -> bool:
     """
     复制静态资源到输出目录。
@@ -722,6 +850,13 @@ def copy_content_assets(force: bool = False) -> bool:
             # 跳过以下划线开头的路径
             relative_path = item.relative_to(CONTENT_DIR)
             if any(part.startswith("_") for part in relative_path.parts):
+                continue
+
+            # 跳过 LaTeX 编译中间产物；tex/ 源码目录里的 PDF 也是编译出来的
+            # （如 CV_cn.pdf），发布的简历 PDF 由 build_latex 写到 content/CV/
+            if item.name.endswith(LATEX_SKIP_SUFFIXES):
+                continue
+            if "tex" in relative_path.parts and item.suffix == ".pdf":
                 continue
 
             # 计算目标路径
@@ -852,6 +987,7 @@ def build(force: bool = False):
     results.append(build_html(force))
     results.append(inject_page_navigation())
     results.append(build_pdf(force))
+    results.append(build_latex(force))
     print()
 
     results.append(copy_assets())
@@ -905,6 +1041,9 @@ def create_parser():
     pdf_parser = subparsers.add_parser("pdf", help="仅构建 PDF 文件")
     pdf_parser.add_argument("-f", "--force", action="store_true", help="强制完整重建")
 
+    latex_parser = subparsers.add_parser("latex", help="仅用 XeLaTeX 编译简历 PDF")
+    latex_parser.add_argument("-f", "--force", action="store_true", help="强制完整重建")
+
     subparsers.add_parser("assets", help="仅复制静态资源")
     subparsers.add_parser("clean", help="清理生成的文件")
 
@@ -940,6 +1079,7 @@ if __name__ == "__main__":
         "build": lambda: build(force),
         "html": lambda: (SITE_DIR.mkdir(parents=True, exist_ok=True), build_html(force), inject_page_navigation(), copy_assets())[3],
         "pdf": lambda: (SITE_DIR.mkdir(parents=True, exist_ok=True), build_pdf(force))[1],
+        "latex": lambda: (SITE_DIR.mkdir(parents=True, exist_ok=True), build_latex(force))[1],
         "assets": lambda: (SITE_DIR.mkdir(parents=True, exist_ok=True), copy_assets())[1],
         "clean": clean,
         "preview": lambda: preview(getattr(args, "port", 8000), getattr(args, "open_browser", True)),
